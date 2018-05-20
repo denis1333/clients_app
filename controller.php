@@ -8,7 +8,7 @@ require 'db.php';
 */
 function Add()
 {
-	$db = new DataBase();
+	$db = new DataBase(); // объект для работы с базой данных
 	$data = $_POST;
 	$phone_list = explode(",", $data['phone_number']); // телефоны перечисленные в textarea через запятую, этот метод преобразует строку в массив с номерами
 	if ($data['name'] != NULL && $data['second_name'] != NULL && $data['patronymic'] != NULL & $data['gender'] != NULL && $data['born_date'] != NULL)//проверка на пустые поля
@@ -23,7 +23,6 @@ function Add()
 				$query_string = 'INSERT INTO clients_phone (id_client, id_phone_number) VALUES ('.$id_client.', '.$id_phone_number[0]['id'].')';
 				var_dump($query_string);
 				$db->QueryWithoutResult($query_string);
-				echo "here";
 			}
 			else
 			{
@@ -31,7 +30,6 @@ function Add()
 				$id_phone_number = $db->QueryWithoutResult($query_string, true);
 				$query_string = 'INSERT INTO clients_phone (id_client, id_phone_number) VALUES ('.$id_client.', '.$id_phone_number.')';
 				$db->QueryWithoutResult($query_string);
-				echo "there";
 			}
 		}
 	}
@@ -91,7 +89,7 @@ function Delete()
 function Change()
 {
 	$data = $_POST;
-    if ($data['name'] != NULL && $data['second_name'] != NULL && $data['patronymic'] != NULL & $data['gender'] != NULL && $data['born_date'] != NULL)
+    if ($data['name'] != NULL && $data['second_name'] != NULL && $data['patronymic'] != NULL & $data['gender'] != NULL && $data['born_date'] != NULL)//проверка на пустые поля
 	{
 		$db = new DataBase();
 		$query_string = 'UPDATE client SET name ="'.$data['name'].'", second_name ="'.$data['second_name'].'", patronymic ="'.$data['patronymic'].'", gender = '.$data['gender'].', born_date = "'.$data['born_date'].'" WHERE id ='.$data['id']; // обновления данных о клиенте
@@ -101,12 +99,20 @@ function Change()
 		$phone_number_form_textarea = explode(',', $data['phone_number']);
 		$query_string = 'DELETE FROM clients_phone WHERE id_client ='.$data['id']; //удаление привязки телефонов к клиенту
 		$db->QueryWithoutResult($query_string);
-		for ($i=0; $i < count($phone_number_form_textarea); $i++) // ДОБАВИТЬ ПРОВЕРКУ НА ОДИНАКОВЫЙ НОМЕР
+		for ($i=0; $i < count($phone_number_form_textarea); $i++) // проверка на содержание номера в бд
 		{ 
-			$query_string = 'INSERT INTO phone_number (phone_number) VALUES ("'.$phone_number_form_textarea[$i].'")';
-			$id_phone_number = $db->QueryWithoutResult($query_string, true);
-			$query_string = 'INSERT INTO clients_phone (id_client, id_phone_number) VALUES ('.$data['id'].', '.$id_phone_number.')';
-			$db->QueryWithoutResult($query_string);
+			$query_string = 'SELECT id FROM phone_number WHERE phone_number ="'.$phone_number_form_textarea[$i].'"';
+			$id_phone_number = $db->QueryWithResult($query_string);
+			if($id_phone_number)
+			{
+				$query_string = 'INSERT INTO phone_number (phone_number) VALUES ("'.$phone_number_form_textarea[$i].'")';
+				$id_phone_number = $db->QueryWithoutResult($query_string, true);
+			}
+			else
+			{
+				$query_string = 'INSERT INTO clients_phone (id_client, id_phone_number) VALUES ('.$data['id'].', '.$id_phone_number.')';
+				$db->QueryWithoutResult($query_string);
+			}
 		}
 		$query_string = 'SELECT phone_number FROM phone_number, clients_phone WHERE clients_phone.id_client='.$data['id']; // выборка новых данных для заполнения полей
 		$phone_numbers = $db->QueryWithResult($query_string);

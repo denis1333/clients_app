@@ -3,14 +3,17 @@
 
     if ($_POST['action'] == 'edit')
     {
-    	Change();
+    	Change(); // метод из файла controller.php
     }
     if ($_POST['action'] == 'delete')
     {
-    	Delete();
+    	Delete(); // метод из файла controller.php
     }
     else
     {
+    	/*
+			Тут происходит выборка из бд для заполнения страницы "Просмотр, изменения карточки клиента"
+    	*/
 		$data = $_POST;
 		$db = new DataBase();
 		$query_string = 'SELECT id, name, second_name, patronymic, born_date, gender FROM client WHERE id='.$data['id'];
@@ -22,7 +25,6 @@
 			$phone_numbers_array[] = $value['phone_number'];
 		}
 		$phone_numbers = implode(",", $phone_numbers_array);
-		var_dump($phone_numbers);
     }
 
 ?>

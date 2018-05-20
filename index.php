@@ -48,23 +48,23 @@
 		*/
 		switch ($_POST['type']) {
 			case 'search':
-				Search();
+				Search(); // метод из файла controller.php
 				break;
 			case 'list':
-				GetAllClients();
+				GetAllClients(); // метод из файла controller.php
 				break;
 	?>
 	</div>
 </body>
 </html>
 
-<?php
+	<?php
 
 			case 'add':
-				Add();
+				Add(); // метод из файла controller.php
 				break;
 			case 'change':
-				Change();
+				Change(); // метод из файла controller.php
 				break;
 		}
-?>
+	?>
