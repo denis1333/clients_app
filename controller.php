@@ -103,16 +103,16 @@ function Change()
 		$db->QueryWithoutResult($query_string);
 		for ($i=0; $i < count($phone_number_form_textarea); $i++) // проверка на содержание номера в бд
 		{ 
-			$query_string = 'SELECT id FROM phone_number WHERE phone_number ="'.$phone_number_form_textarea[$i].'"';
+			$query_string = 'SELECT id FROM phone_number WHERE phone_number ="'.$phone_number_form_textarea[$i].'"'; 
 			$id_phone_number = $db->QueryWithResult($query_string);
-			if(!$id_phone_number)
+			if(!$id_phone_number)// если нет в бд
 			{
 				$query_string = 'INSERT INTO phone_number (phone_number) VALUES ("'.$phone_number_form_textarea[$i].'")';
 				$id_phone_number = $db->QueryWithoutResult($query_string, true);
 				$query_string = 'INSERT INTO clients_phone (id_client, id_phone_number) VALUES ('.$data['id'].', '.$id_phone_number.')';
 				$db->QueryWithoutResult($query_string);
 			}
-			else
+			else// если есть
 			{
 				$query_string = 'INSERT INTO clients_phone (id_client, id_phone_number) VALUES ('.$data['id'].', '.$id_phone_number[0]['id'].')';
 				$db->QueryWithoutResult($query_string);
