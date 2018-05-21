@@ -35,7 +35,6 @@ class DataBase
 		if($return_last_id)
 			return $id;
 	}
-
 }
 
 ?>

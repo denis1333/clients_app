@@ -21,7 +21,6 @@ function Add()
 			if ($id_phone_number)
 			{
 				$query_string = 'INSERT INTO clients_phone (id_client, id_phone_number) VALUES ('.$id_client.', '.$id_phone_number[0]['id'].')';
-				var_dump($query_string);
 				$db->QueryWithoutResult($query_string);
 			}
 			else
@@ -48,7 +47,7 @@ function Search()
 	if ($search_type == "second_name") // запрос для поиска по фамилии
 		$query_string = 'SELECT id, name, second_name, patronymic FROM client WHERE second_name="'.$query.'"';
 	if ($search_type == "phone_number") // запрос для поиска по номеру телефона
-		$query_string = 'SELECT client.id, name, second_name, patronymic FROM client, phone_number, clients_phone WHERE clients_phone.id_client = client.id AND clients_phone.id_phone_number = (SELECT id FROM phone_number WHERE phone_number = "'.$query.'")';
+		$query_string = 'SELECT DISTINCT client.id, name, second_name, patronymic FROM client, phone_number, clients_phone WHERE clients_phone.id_client = client.id AND clients_phone.id_phone_number = (SELECT id FROM phone_number WHERE phone_number = "'.$query.'")';
 	$over_result = $db->QueryWithResult($query_string);
 	$display = '<form action="change_values.php" method="post"><div style="height: 300px; overflow-y: scroll;">'; // генерация html кода для списка всех пользователей
 	for ($i = 0; $i < count($over_result); $i++)
@@ -103,14 +102,16 @@ function Change()
 		{ 
 			$query_string = 'SELECT id FROM phone_number WHERE phone_number ="'.$phone_number_form_textarea[$i].'"';
 			$id_phone_number = $db->QueryWithResult($query_string);
-			if($id_phone_number)
+			if(!$id_phone_number)
 			{
 				$query_string = 'INSERT INTO phone_number (phone_number) VALUES ("'.$phone_number_form_textarea[$i].'")';
 				$id_phone_number = $db->QueryWithoutResult($query_string, true);
+				$query_string = 'INSERT INTO clients_phone (id_client, id_phone_number) VALUES ('.$data['id'].', '.$id_phone_number.')';
+				$db->QueryWithoutResult($query_string);
 			}
 			else
 			{
-				$query_string = 'INSERT INTO clients_phone (id_client, id_phone_number) VALUES ('.$data['id'].', '.$id_phone_number.')';
+				$query_string = 'INSERT INTO clients_phone (id_client, id_phone_number) VALUES ('.$data['id'].', '.$id_phone_number[0]['id'].')';
 				$db->QueryWithoutResult($query_string);
 			}
 		}
