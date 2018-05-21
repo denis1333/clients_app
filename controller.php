@@ -33,7 +33,7 @@ function Add()
 		}
 	}
 	else{
-		echo 'null value';
+		echo 'error: null value';
 	}
 }
 /*
@@ -51,7 +51,10 @@ function Search()
 	$over_result = $db->QueryWithResult($query_string);
 	$display = '<form action="change_values.php" method="post"><div style="height: 300px; overflow-y: scroll;">'; // генерация html кода для списка всех пользователей
 	for ($i = 0; $i < count($over_result); $i++)
-		$display = $display.'<p>'.$over_result[$i]['name'].' '.$over_result[$i]['second_name'].' '.$over_result[$i]['patronymic'].' '.'<input name="id" type="radio" value="'.$over_result[$i]['id'].'"></p>';
+		if ($i == 0) // для первого элемента в списке установить значение checked для radio
+			$display = $display.'<p>'.$over_result[$i]['name'].' '.$over_result[$i]['patronymic'].' '.$over_result[$i]['second_name'].' '.'<input checked = "true" name="id" type="radio" value="'.$over_result[$i]['id'].'"></p>';
+		else
+			$display = $display.'<p>'.$over_result[$i]['name'].' '.$over_result[$i]['patronymic'].' '.$over_result[$i]['second_name'].' '.'<input name="id" type="radio" value="'.$over_result[$i]['id'].'"></p>';
 	$display = $display.'</div><input type="submit" value="Посмотреть карточку"></form>';
 	echo($display);
 }
@@ -67,9 +70,9 @@ function GetAllClients()
 	$display = '<form action="change_values.php" method="post"><div style="height: 300px; width: 300px; overflow-y: scroll;">';
 	for ($i = 0; $i < count($over_result); $i++)
 		if ($i == 0) // для первого элемента в списке установить значение checked для radio
-			$display = $display.'<p>'.$over_result[$i]['name'].' '.$over_result[$i]['second_name'].' '.$over_result[$i]['patronymic'].' '.'<input checked="true" name="id" type="radio" value="'.$over_result[$i]['id'].'"></p>';
+			$display = $display.'<p>'.$over_result[$i]['name'].' '.$over_result[$i]['patronymic'].' '.$over_result[$i]['second_name'].' '.'<input checked="true" name="id" type="radio" value="'.$over_result[$i]['id'].'"></p>';
 		else
-			$display = $display.'<p>'.$over_result[$i]['name'].' '.$over_result[$i]['second_name'].' '.$over_result[$i]['patronymic'].' '.'<input checked="true" name="id" type="radio" value="'.$over_result[$i]['id'].'"></p>';
+			$display = $display.'<p>'.$over_result[$i]['name'].' '.$over_result[$i]['patronymic'].' '.$over_result[$i]['second_name'].' '.'<input checked="true" name="id" type="radio" value="'.$over_result[$i]['id'].'"></p>';
 	$display = $display.'</div><input type="submit" value="Посмотреть карточку""></form>';
 	echo($display);
 }
@@ -123,6 +126,9 @@ function Change()
 			$phone_numbers_array[] = $value['phone_number'];
 		}
 		$phone_numbers = implode(",", $phone_numbers_array);
+	}
+	else{
+		echo 'error: null value';
 	}
 }
 
